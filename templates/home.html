@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="p-4 bg-light rounded-3 mb-4">
+  <h1>格拉斯哥租车比价 + 自驾社区</h1>
+  <p class="text-muted mb-0">面向中国留学生：先比价、再跳转预订；同时沉淀路线/避雷/心得。</p>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">租车比价（实时接口占位）</h5>
+        <p class="card-text text-muted">输入地点/日期/年龄，展示多家租车公司报价对比（后续接入 Skyscanner）。</p>
+        <a class="btn btn-primary" href="/pricing/search/">开始比价</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">自驾社区</h5>
+        <p class="card-text text-muted">分享路线、避雷与心得；支持分类、搜索与分页。</p>
+        <a class="btn btn-outline-primary" href="/community/">进入社区</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

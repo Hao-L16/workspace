@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-3">发布帖子</h2>
+<form method="post" class="card">
+  <div class="card-body">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-primary" type="submit">发布</button>
+    <a class="btn btn-outline-secondary" href="/community/">取消</a>
+  </div>
+</form>
+{% endblock %}

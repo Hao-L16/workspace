@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>格拉斯哥租车比价（骨架）</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Search</button>
+</form>
+{% endblock %}

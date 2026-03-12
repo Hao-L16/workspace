@@ -44,6 +44,15 @@
         <a class="btn btn-sm btn-outline-primary" href="{{ o.booking_url }}" target="_blank">
           去 Arnold Clark 预订
         </a>
+         {% if user.is_authenticated %}
+          {% if o.id in favorite_ids %}
+            <a class="btn btn-sm btn-success" href="/pricing/offer/{{ o.id }}/favorite/">已收藏（点取消）</a>
+          {% else %}
+            <a class="btn btn-sm btn-outline-secondary" href="/pricing/offer/{{ o.id }}/favorite/">收藏</a>
+          {% endif %}
+        {% else %}
+          <a class="btn btn-sm btn-outline-secondary" href="/accounts/login/">登录后收藏</a>
+        {% endif %}
       </td>
     </tr>
     {% endfor %}

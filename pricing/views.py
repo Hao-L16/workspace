@@ -1,9 +1,11 @@
 from datetime import datetime
+from decimal import Decimal
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-
+from django.contrib import messages
+from urllib3 import request
 from .forms import ArnoldClarkSearchForm
-from .models import QuoteSearch
+from .models import QuoteSearch,QuoteOffer, FavoriteOffer
 
 ONE_WAY_FEE = 20
 ARNOLD_CLARK_RATES = [
@@ -15,7 +17,7 @@ ARNOLD_CLARK_RATES = [
     {"code": "SUV_AUTO", "name": "SUV Automatic", "daily_price": 67, "transmission": "Automatic"},
     {"code": "ESTATE_AUTO", "name": "Large Estate Automatic", "daily_price": 58, "transmission": "Automatic"},
 ]
-ARNOLD_CLARK_BOOKING_URL = "https://www.arnoldclark.com/car-hire"
+ARNOLD_CLARK_BOOKING_URL = "https://www.arnoldclarkrental.com/"
 def _calc_days(pickup_dt: datetime, return_dt: datetime) -> int:
     seconds = (return_dt - pickup_dt).total_seconds()
     days = int(seconds // 86400)
@@ -48,40 +50,105 @@ def pricing_search(request):
 
 def pricing_results(request, search_id: int):
     qs = get_object_or_404(QuoteSearch, id=search_id)
+
+    # 计算租期天数（你之前已有 _calc_days 就用你的）
     days = _calc_days(qs.pickup_datetime, qs.dropoff_datetime)
+
     one_way = (qs.pickup_entity_id != qs.return_entity_id)
-    one_way_fee = ONE_WAY_FEE if one_way else 0
-    offers = []
+    one_way_fee = Decimal("20.00") if one_way else Decimal("0.00")
+
+    # 1) 先计算“报价列表”（Arnold Clark）
+    computed = []
     for r in ARNOLD_CLARK_RATES:
-        total = r["daily_price"] * days + one_way_fee
-        offers.append({
-            "provider": "Arnold Clark",
-            "car_type": r["name"],
+        daily = Decimal(str(r["daily_price"]))
+        total = daily * Decimal(days) + one_way_fee
+
+        computed.append({
+            "provider_name": "Arnold Clark",
+            "agent_id": "arnoldclark",
+            "car_name": r["name"],
             "transmission": r["transmission"],
-            "daily_price": r["daily_price"],
-            "days": days,
-            "one_way_fee": one_way_fee,
+            "seats": None,
             "total_price": total,
             "currency": "GBP",
-            "booking_url": ARNOLD_CLARK_BOOKING_URL,
+            "deeplink_url": ARNOLD_CLARK_BOOKING_URL,
+            "raw_json": {
+                "rate_code": r["code"],
+                "daily_price": float(daily),
+                "days": days,
+                "one_way_fee": float(one_way_fee),
+            }
         })
 
-    # sort by total price
-    offers.sort(key=lambda x: x["total_price"])
+    # 2) 写入数据库：清理旧 offers → 重新生成（简单稳，不怕重复）
+    QuoteOffer.objects.filter(search=qs).delete()
+    QuoteOffer.objects.bulk_create([
+        QuoteOffer(
+            search=qs,
+            agent_id=o["agent_id"],
+            provider_name=o["provider_name"],
+            car_name=o["car_name"],
+            transmission=o["transmission"],
+            seats=o["seats"],
+            total_price=o["total_price"],
+            currency=o["currency"],
+            deeplink_url=o["deeplink_url"],
+            raw_json=o["raw_json"],
+        )
+        for o in computed
+    ])
+
+    # 3) 从 DB 读 offers（用于模板渲染）
+    offers_qs = QuoteOffer.objects.filter(search=qs).order_by("total_price")
+
+    # 4) 如果用户登录，取出已收藏的 offer_ids，便于按钮状态显示
+    favorite_ids = set()
+    if request.user.is_authenticated:
+        favorite_ids = set(
+            FavoriteOffer.objects.filter(user=request.user, offer__search=qs).values_list("offer_id", flat=True)
+        )
 
     return render(request, "pricing/results.html", {
         "search": qs,
-        "offers": offers,
+        "offers": offers_qs,
+        "favorite_ids": favorite_ids,
+        "one_way_fee": one_way_fee,
+        "days": days,
         "booking_url": ARNOLD_CLARK_BOOKING_URL,
     })
 
 @login_required
 def pricing_history(request):
     #先占位：后面再按user过滤QuoteSearch
-    searches = QuoteSearch.objects.filter(user=request.user).order_by("-created_at")
-    return render(request,"pricing/history.html",{"searches":searches})
+    searches = (
+        QuoteSearch.objects
+        .filter(user=request.user)
+        .order_by("-created_at")
+        .prefetch_related("offers")
+    )
+    return render(request, "pricing/history.html", {"searches": searches})
 
 @login_required
 def pricing_favorites(request):
     #先占位:你后面做FavoriteOffer时再完善
-    return render(request,"pricing/favorites.html")
+    favorites = (
+        FavoriteOffer.objects
+        .filter(user=request.user)
+        .select_related("offer", "offer__search")
+        .order_by("-created_at")
+    )
+    return render(request, "pricing/favorites.html", {"favorites": favorites})
+
+@login_required
+def toggle_favorite_offer(request, offer_id: int):
+    offer = get_object_or_404(QuoteOffer, id=offer_id)
+
+    fav, created = FavoriteOffer.objects.get_or_create(user=request.user, offer=offer)
+    if created:
+        messages.success(request, "已收藏该报价。")
+    else:
+        fav.delete()
+        messages.info(request, "已取消收藏。")
+
+    # 回到报价结果页（更符合用户习惯）
+    return redirect("pricing_results", search_id=offer.search_id)

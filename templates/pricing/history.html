@@ -1,14 +1,27 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>我的比价历史</h2>
-<ul>
+<h2 class="mb-3">我的比价历史</h2>
+
+<ul class="list-group">
   {% for s in searches %}
-    <li>
-      <a href="/pricing/results/{{ s.id }}/">Search #{{ s.id }}</a>
-      | {{ s.pickup_entity_id }} | {{ s.pickup_datetime }} → {{ s.dropoff_datetime }}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <div>
+        <div><b>Search #{{ s.id }}</b></div>
+        <div class="text-muted">
+          Pick-up: {{ s.pickup_entity_id }} | {{ s.pickup_datetime }}
+          <br>
+          Return: {{ s.return_entity_id }} | {{ s.dropoff_datetime }}
+        </div>
+      </div>
+      <div class="text-end">
+        <span class="badge bg-secondary">Offers: {{ s.offers.count }}</span>
+        <div class="mt-2">
+          <a class="btn btn-sm btn-outline-primary" href="/pricing/results/{{ s.id }}/">查看结果</a>
+        </div>
+      </div>
     </li>
   {% empty %}
-    <li>暂无历史</li>
+    <li class="list-group-item">暂无历史记录</li>
   {% endfor %}
 </ul>
 {% endblock %}

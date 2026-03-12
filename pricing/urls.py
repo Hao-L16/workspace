@@ -8,5 +8,6 @@ urlpatterns = [
     path("results/<int:search_id>/", views.pricing_results, name="pricing_results"),
     path("history/",views.pricing_history, name = "pricing_history"),
     path("favorites/",views.pricing_favorites,name="pricing_favorites"),
+    path("offer/<int:offer_id>/favorite/", views.toggle_favorite_offer, name="toggle_favorite_offer"),
 
 ]

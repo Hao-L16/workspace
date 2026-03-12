@@ -1,5 +1,36 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>我的收藏（占位）</h2>
-<p>当前阶段未接入报价与收藏功能；后续接入 API 或假数据后将展示收藏列表。</p>
+<h2 class="mb-3">我的收藏报价</h2>
+
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>供应商</th>
+      <th>车型</th>
+      <th>变速箱</th>
+      <th>总价</th>
+      <th>来自搜索</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for f in favorites %}
+      <tr>
+        <td>{{ f.offer.provider_name }}</td>
+        <td>{{ f.offer.car_name }}</td>
+        <td>{{ f.offer.transmission }}</td>
+        <td><b>£{{ f.offer.total_price }}</b></td>
+        <td>
+          <a href="/pricing/results/{{ f.offer.search_id }}/">Search #{{ f.offer.search_id }}</a>
+        </td>
+        <td>
+          <a class="btn btn-sm btn-outline-primary" href="{{ f.offer.deeplink_url }}" target="_blank">去官网</a>
+          <a class="btn btn-sm btn-outline-danger" href="/pricing/offer/{{ f.offer.id }}/favorite/">取消收藏</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6">暂无收藏</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
 {% endblock %}

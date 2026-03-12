@@ -20,6 +20,7 @@ class QuoteSearch(models.Model):
     currency = models.CharField(max_length=10, default="GBP")
 
     pickup_entity_id = models.CharField(max_length=32)
+    return_entity_id = models.CharField(max_length=32)
     pickup_datetime = models.DateTimeField()
     dropoff_datetime = models.DateTimeField()
 

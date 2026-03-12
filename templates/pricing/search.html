@@ -1,9 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>格拉斯哥租车比价（骨架）</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Search</button>
+<h2 class="mb-3">Start your booking</h2>
+
+<form method="post" class="card">
+  <div class="card-body">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-primary" type="submit">开始比价</button>
+  </div>
 </form>
+
+<p class="text-muted mt-3">
+  说明：最终价格以 Arnold Clark 官网为准。
+</p>
 {% endblock %}

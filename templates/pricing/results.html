@@ -1,54 +1,54 @@
 {% extends "base.html" %}
 {% block content %}
-<h2 class="mb-3">比价结果</h2>
+<h2 class="mb-3">报价对比（Arnold Clark）</h2>
 
 <div class="card mb-3">
   <div class="card-body">
-    <div class="row">
-      <div class="col-md-3"><b>地点</b><div class="text-muted">{{ search.pickup_entity_id }}</div></div>
-      <div class="col-md-3"><b>取车</b><div class="text-muted">{{ search.pickup_datetime }}</div></div>
-      <div class="col-md-3"><b>还车</b><div class="text-muted">{{ search.dropoff_datetime }}</div></div>
-      <div class="col-md-3"><b>年龄</b><div class="text-muted">{{ search.driver_age }}</div></div>
-    </div>
-  </div>
-</div>
-
-<div class="d-flex justify-content-between align-items-center mb-2">
-  <h5 class="mb-0">报价对比</h5>
-  <div>
-    <select class="form-select form-select-sm d-inline-block" style="width:160px;" disabled>
-      <option>排序（占位）</option>
-      <option>最低价</option>
-      <option>自动挡优先</option>
-    </select>
+    <div><b>Pick-up:</b> {{ search.pickup_entity_id }} | {{ search.pickup_datetime }}</div>
+    <div><b>Return:</b> {{ search.return_entity_id }} | {{ search.dropoff_datetime }}</div>
   </div>
 </div>
 
 <div class="alert alert-warning">
-  当前阶段尚未接入实时 API，因此暂无报价数据。后续接入 Skyscanner 后，此处会显示多家供应商报价对比表，并提供“收藏/外链跳转”按钮。
+  本页面报价为课程演示用（按天估算）。最终价格、库存与条款请以 Arnold Clark 官网为准。
 </div>
 
 <table class="table table-bordered table-striped">
   <thead>
     <tr>
-      <th>供应商</th>
       <th>车型</th>
       <th>变速箱</th>
-      <th>座位</th>
-      <th>总价</th>
+      <th>日租价</th>
+      <th>天数</th>
+      <th>异地还车费</th>
+      <th>总价（估算）</th>
       <th>操作</th>
     </tr>
   </thead>
   <tbody>
-    <tr class="text-muted">
-      <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+    {% for o in offers %}
+    <tr>
+      <td>{{ o.car_type }}</td>
+      <td>{{ o.transmission }}</td>
+      <td>£{{ o.daily_price }}</td>
+      <td>{{ o.days }}</td>
       <td>
-        <button class="btn btn-sm btn-outline-secondary" disabled>收藏</button>
-        <button class="btn btn-sm btn-outline-secondary" disabled>去预订</button>
+        {% if o.one_way_fee > 0 %}
+          £{{ o.one_way_fee }}
+        {% else %}
+          £0
+        {% endif %}
+      </td>
+      <td><b>£{{ o.total_price }}</b></td>
+      <td>
+        <a class="btn btn-sm btn-outline-primary" href="{{ o.booking_url }}" target="_blank">
+          去 Arnold Clark 预订
+        </a>
       </td>
     </tr>
+    {% endfor %}
   </tbody>
 </table>
 
-<a class="btn btn-outline-primary" href="/pricing/search/">返回重新搜索</a>
+<a class="btn btn-outline-secondary" href="/pricing/search/">返回重新搜索</a>
 {% endblock %}

@@ -7,4 +7,5 @@ urlpatterns = [
     path("", views.post_list, name="community_list"),
     path("post/<int:post_id>/", views.post_detail, name="community_detail"),
     path("new/", views.post_create, name="community_new"),
+    path("post/<int:post_id>/delete/", views.post_delete, name="community_delete"),
 ]

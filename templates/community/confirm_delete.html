@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-3">确认删除</h2>
+
+<div class="alert alert-warning">
+  你确定要删除帖子：<b>{{ post.title }}</b> 吗？此操作不可撤销。
+</div>
+
+<form method="post">
+  {% csrf_token %}
+  <button class="btn btn-danger" type="submit">确认删除</button>
+  <a class="btn btn-outline-secondary" href="/community/post/{{ post.id }}/">取消</a>
+</form>
+{% endblock %}

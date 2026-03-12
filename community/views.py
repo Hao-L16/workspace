@@ -1,3 +1,4 @@
+from django.http import HttpResponseForbidden
 from django.shortcuts import render
 from django.core.paginator import Paginator
 # Create your views here.
@@ -45,3 +46,18 @@ def post_create(request):
     else:
         form = PostForm()
     return render(request, "community/new.html", {"form": form})
+
+@login_required
+def post_delete(request, post_id: int):
+    post = get_object_or_404(Post, id=post_id)
+
+    # 权限：只有作者或管理员可删
+    if post.author != request.user and not request.user.is_staff:
+        return HttpResponseForbidden("You do not have permission to delete this post.")
+
+    if request.method == "POST":
+        post.delete()
+        return redirect("community_list")
+
+    # GET：显示确认页
+    return render(request, "community/confirm_delete.html", {"post": post})

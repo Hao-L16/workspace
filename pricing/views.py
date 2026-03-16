@@ -151,11 +151,11 @@ def pricing_results(request, search_id: int):
 
 @login_required
 def pricing_history(request):
-    #先占位：后面再按user过滤QuoteSearch
+    # 以创建时间倒序显示搜索记录（存在创建时间相同的情况时，使用ID作为次级排序）
     searches = (
         QuoteSearch.objects
         .filter(user=request.user)
-        .order_by("-created_at")
+        .order_by("-created_at", "-id")
         .prefetch_related("offers")
     )
     return render(request, "pricing/history.html", {"searches": searches})

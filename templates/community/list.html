@@ -2,10 +2,10 @@
 {% block title %}Community - Glasgow Car Hire{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-5">
+<div class="community-header">
   <div>
-    <h1 class="mb-2">Driving Community</h1>
-    <p class="text-muted mb-0">Share routes, avoid pitfalls, and learn from fellow drivers</p>
+    <h1 class="community-title">Driving Community</h1>
+    <p class="community-subtitle">Share routes, avoid pitfalls, and learn from fellow drivers</p>
   </div>
   <a href="/community/new/" class="btn btn-primary btn-lg">
     <i class="fas fa-plus me-2"></i>Share Experience
@@ -13,7 +13,7 @@
 </div>
 
 <!-- Search and Filter -->
-<div class="card mb-5">
+<div class="search-filter-section card mb-5">
   <div class="card-body">
     <form class="search-form" method="get">
       <div class="row g-3">
@@ -42,7 +42,7 @@
     </form>
     
     <!-- Category Tabs -->
-    <ul class="nav nav-pills mt-4 justify-content-center">
+    <ul class="category-tabs nav nav-pills mt-4 justify-content-center">
       <li class="nav-item">
         <a class="nav-link {% if not category %}active{% endif %}" href="/community/?q={{ q }}">
           <i class="fas fa-th-list me-2"></i>All
@@ -68,16 +68,16 @@
 </div>
 
 <!-- Posts -->
-<div class="row g-4">
+<div class="posts-grid row g-4">
   {% for post in page_obj %}
   <div class="col-lg-6">
-    <div class="card h-100">
+    <div class="post-card card h-100">
       {% if post.image %}
       <img src="{{ post.image.url }}" class="post-thumbnail" alt="Post image">
       {% endif %}
       <div class="card-body">
-        <div class="d-flex justify-content-between align-items-start mb-3">
-          <h5 class="card-title mb-1">
+        <div class="post-meta d-flex justify-content-between align-items-start mb-3">
+          <h5 class="post-title mb-1">
             <a href="/community/post/{{ post.id }}/" class="text-decoration-none text-dark">{{ post.title }}</a>
           </h5>
           <span class="badge 
@@ -89,12 +89,12 @@
           </span>
         </div>
         
-        <p class="card-text text-muted mb-3">
+        <p class="post-excerpt card-text text-muted mb-3">
           {{ post.content|truncatechars:150 }}
         </p>
         
-        <div class="d-flex justify-content-between align-items-center">
-          <small class="text-muted">
+        <div class="post-footer d-flex justify-content-between align-items-center">
+          <small class="post-author text-muted">
             <i class="fas fa-user me-1"></i>{{ post.author.username }} • 
             <i class="fas fa-calendar me-1"></i>{{ post.created_at|date:"M j, Y" }}
           </small>

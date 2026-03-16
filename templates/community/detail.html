@@ -1,25 +1,57 @@
 {% extends "base.html" %}
+{% block title %}{{ post.title }} - Community{% endblock %}
+
 {% block content %}
-<h2 class="mb-2">{{ post.title }}</h2>
-
-<div class="d-flex justify-content-between align-items-center mb-2">
-  <div class="text-muted">
-    分类：{{ post.get_category_display|default:post.category }} |
-    作者：{{ post.author.username }} |
-    时间：{{ post.created_at }}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <article class="card">
+      <div class="card-body">
+        <!-- Title -->
+        <h1 class="card-title mb-4">{{ post.title }}</h1>
+        
+        <!-- Meta Information -->
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-4 border-bottom">
+          <div class="d-flex align-items-center">
+            <span class="badge me-3
+              {% if post.category == 'ROUTE' %}bg-primary
+              {% elif post.category == 'AVOID' %}bg-danger
+              {% elif post.category == 'TIPS' %}bg-success
+              {% else %}bg-secondary{% endif %}">
+              {{ post.get_category_display }}
+            </span>
+            <div class="text-muted">
+              <i class="fas fa-user me-1"></i>{{ post.author.username }} • 
+              <i class="fas fa-calendar me-1"></i>{{ post.created_at|date:"F j, Y \a\t g:i A" }}
+            </div>
+          </div>
+          
+          {% if user.is_authenticated and (user == post.author or user.is_staff) %}
+          <a href="/community/post/{{ post.id }}/delete/" class="btn btn-outline-danger">
+            <i class="fas fa-trash me-2"></i>Delete Post
+          </a>
+          {% endif %}
+        </div>
+        
+        <!-- Image -->
+        {% if post.image %}
+        <div class="mb-4">
+          <img src="{{ post.image.url }}" alt="Post Image" class="post-img">
+        </div>
+        {% endif %}
+        
+        <!-- Content -->
+        <div class="post-content">
+          <p style="white-space: pre-wrap; line-height: 1.7; font-size: 1.1rem; color: var(--apple-text);">{{ post.content }}</p>
+        </div>
+      </div>
+    </article>
+    
+    <!-- Back Button -->
+    <div class="text-center mt-5">
+      <a href="/community/" class="btn btn-outline-secondary btn-lg px-4">
+        <i class="fas fa-arrow-left me-2"></i>Back to Community
+      </a>
+    </div>
   </div>
-
-  {% if user.is_authenticated %}
-    {% if user == post.author or user.is_staff %}
-        <a class="btn btn-sm btn-outline-danger" href="/community/post/{{ post.id }}/delete/">删除帖子</a>
-    {% endif %}
-  {% endif %}
 </div>
-
-{% if post.image %}
-  <img src="{{ post.image.url }}" alt="Post Image" class="post-img rounded mb-3">
-{% endif %}
-
-<hr>
-<p style="white-space:pre-wrap;">{{ post.content }}</p>
 {% endblock %}

@@ -1,29 +1,77 @@
 {% extends "base.html" %}
+{% block title %}Home - Glasgow Car Hire Compare & Drive Community{% endblock %}
+
 {% block content %}
-<div class="p-4 bg-light rounded-3 mb-4">
-  <h1>格拉斯哥租车比价 + 自驾社区</h1>
-  <p class="text-muted mb-0">面向中国留学生：先比价、再跳转预订；同时沉淀路线/避雷/心得。</p>
-</div>
-
-<div class="row g-3">
-  <div class="col-md-6">
-    <div class="card h-100">
-      <div class="card-body">
-        <h5 class="card-title">租车比价（实时接口占位）</h5>
-        <p class="card-text text-muted">输入地点/日期/年龄，展示多家租车公司报价对比（后续接入 Skyscanner）。</p>
-        <a class="btn btn-primary" href="/pricing/search/">开始比价</a>
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="container">
+    <div class="row justify-content-center text-center">
+      <div class="col-lg-8">
+        <h1 class="display-4">Compare Glasgow Car Hire Prices and Explore Driving Tips</h1>
+        <p class="lead">For Chinese students in Glasgow: Compare prices, book easily, and share routes, pitfalls, and experiences with fellow drivers.</p>
+        <div class="row g-4 justify-content-center mt-4">
+          <div class="col-md-6">
+            <div class="feature-card">
+              <h3 class="card-title">Start Comparing</h3>
+              <p class="card-text">Enter your pick-up and return details to get instant price comparisons from trusted providers.</p>
+              <a href="/pricing/search/" class="btn btn-primary btn-lg px-4 py-3">
+                <i class="fas fa-search me-2"></i>Compare Prices
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="feature-card">
+              <h3 class="card-title">Explore Community</h3>
+              <p class="card-text">Share driving routes, avoid common pitfalls, and learn from other students' experiences.</p>
+              <a href="/community/" class="btn btn-outline-light btn-lg px-4 py-3 border-white text-white">
+                <i class="fas fa-users me-2"></i>Join Community
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+</section>
 
-  <div class="col-md-6">
-    <div class="card h-100">
-      <div class="card-body">
-        <h5 class="card-title">自驾社区</h5>
-        <p class="card-text text-muted">分享路线、避雷与心得；支持分类、搜索与分页。</p>
-        <a class="btn btn-outline-primary" href="/community/">进入社区</a>
+<!-- Features Section -->
+<section class="py-5">
+  <div class="container">
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-4 text-center">
+        <div class="card h-100 border-0">
+          <div class="card-body py-5">
+            <div class="mb-4">
+              <i class="fas fa-search fa-3x text-primary"></i>
+            </div>
+            <h5 class="card-title">Compare Prices Easily</h5>
+            <p class="card-text text-muted">Quick search with real-time price comparison from Arnold Clark and other providers.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 text-center">
+        <div class="card h-100 border-0">
+          <div class="card-body py-5">
+            <div class="mb-4">
+              <i class="fas fa-heart fa-3x text-danger"></i>
+            </div>
+            <h5 class="card-title">Save Favorite Offers</h5>
+            <p class="card-text text-muted">Bookmark your preferred options and access them anytime from your dashboard.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 text-center">
+        <div class="card h-100 border-0">
+          <div class="card-body py-5">
+            <div class="mb-4">
+              <i class="fas fa-route fa-3x text-success"></i>
+            </div>
+            <h5 class="card-title">Share Routes & Avoid Pitfalls</h5>
+            <p class="card-text text-muted">Community-driven tips for the best driving routes and things to watch out for.</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
+</section>
 {% endblock %}

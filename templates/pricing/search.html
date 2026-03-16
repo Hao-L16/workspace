@@ -1,16 +1,97 @@
 {% extends "base.html" %}
+{% block title %}Compare Car Hire Prices - Glasgow Car Hire{% endblock %}
+
 {% block content %}
-<h2 class="mb-3">Start your booking</h2>
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header text-center">
+        <h2 class="mb-0">Find Your Perfect Car Hire</h2>
+        <p class="text-muted mt-2 mb-0">Compare prices from trusted providers in Glasgow</p>
+      </div>
+      <div class="card-body">
+        <form method="post" class="search-form">
+          {% csrf_token %}
 
-<form method="post" class="card">
-  <div class="card-body">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button class="btn btn-primary" type="submit">开始比价</button>
+          {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {{ form.non_field_errors }}
+          </div>
+          {% endif %}
+
+          <!-- Pick-up Details -->
+          <div class="mb-5">
+            <h5 class="text-primary mb-4">
+              <i class="fas fa-map-marker-alt me-2"></i>Pick-up Details
+            </h5>
+            <div class="row g-4">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="id_pickup_location">Pick-up Location</label>
+                {{ form.pickup_location }}
+                {% if form.pickup_location.errors %}
+                <div class="text-danger small mt-1">{{ form.pickup_location.errors.as_text|striptags }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-3">
+                <label class="form-label fw-semibold" for="id_pickup_date">Date</label>
+                {{ form.pickup_date }}
+                {% if form.pickup_date.errors %}
+                <div class="text-danger small mt-1">{{ form.pickup_date.errors.as_text|striptags }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-3">
+                <label class="form-label fw-semibold" for="id_pickup_time">Time</label>
+                {{ form.pickup_time }}
+                {% if form.pickup_time.errors %}
+                <div class="text-danger small mt-1">{{ form.pickup_time.errors.as_text|striptags }}</div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          
+          <!-- Return Details -->
+          <div class="mb-5">
+            <h5 class="text-primary mb-4">
+              <i class="fas fa-arrow-right me-2"></i>Return Details
+            </h5>
+            <div class="row g-4">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" for="id_return_location">Return Location</label>
+                {{ form.return_location }}
+                {% if form.return_location.errors %}
+                <div class="text-danger small mt-1">{{ form.return_location.errors.as_text|striptags }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-3">
+                <label class="form-label fw-semibold" for="id_return_date">Date</label>
+                {{ form.return_date }}
+                {% if form.return_date.errors %}
+                <div class="text-danger small mt-1">{{ form.return_date.errors.as_text|striptags }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-3">
+                <label class="form-label fw-semibold" for="id_return_time">Time</label>
+                {{ form.return_time }}
+                {% if form.return_time.errors %}
+                <div class="text-danger small mt-1">{{ form.return_time.errors.as_text|striptags }}</div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          
+          <div class="text-center">
+            <button class="btn btn-primary btn-lg px-5 py-3" type="submit">
+              <i class="fas fa-search me-2"></i>Start Comparing
+            </button>
+          </div>
+        </form>
+        
+        <div class="alert alert-info mt-5">
+          <i class="fas fa-info-circle me-2"></i>
+          <small>Prices are manually maintained for coursework demonstration and linked to Arnold Clark. Final prices, availability, and terms are subject to change on the official website.</small>
+        </div>
+      </div>
+    </div>
   </div>
-</form>
-
-<p class="text-muted mt-3">
-  说明：最终价格以 Arnold Clark 官网为准。
-</p>
+</div>
 {% endblock %}

@@ -1,27 +1,56 @@
 {% extends "base.html" %}
-{% block content %}
-<h2 class="mb-3">我的比价历史</h2>
+{% block title %}Search History - Glasgow Car Hire{% endblock %}
 
-<ul class="list-group">
-  {% for s in searches %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <div>
-        <div><b>Search #{{ s.id }}</b></div>
-        <div class="text-muted">
-          Pick-up: {{ s.pickup_entity_id }} | {{ s.pickup_datetime }}
-          <br>
-          Return: {{ s.return_entity_id }} | {{ s.dropoff_datetime }}
+{% block content %}
+<div class="text-center mb-5">
+  <h1 class="mb-3">Your Search History</h1>
+  <p class="text-muted">View and revisit your previous car hire searches</p>
+</div>
+
+<div class="row g-4">
+  {% for search in searches %}
+  <div class="col-md-6 col-lg-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <h6 class="card-title mb-1">Search #{{ search.id }}</h6>
+          <span class="badge bg-primary">{{ search.offers.count }} offers</span>
         </div>
-      </div>
-      <div class="text-end">
-        <span class="badge bg-secondary">Offers: {{ s.offers.count }}</span>
-        <div class="mt-2">
-          <a class="btn btn-sm btn-outline-primary" href="/pricing/results/{{ s.id }}/">查看结果</a>
+        
+        <div class="mb-4">
+          <div class="d-flex align-items-center mb-2">
+            <i class="fas fa-map-marker-alt text-primary me-2"></i>
+            <div>
+              <small class="text-muted d-block">Pick-up</small>
+              <div class="fw-semibold">{{ search.pickup_entity_id }}</div>
+              <small class="text-muted">{{ search.pickup_datetime|date:"M j, Y g:i A" }}</small>
+            </div>
+          </div>
+          <div class="d-flex align-items-center">
+            <i class="fas fa-flag-checkered text-success me-2"></i>
+            <div>
+              <small class="text-muted d-block">Return</small>
+              <div class="fw-semibold">{{ search.return_entity_id }}</div>
+              <small class="text-muted">{{ search.dropoff_datetime|date:"M j, Y g:i A" }}</small>
+            </div>
+          </div>
         </div>
+        
+        <a href="/pricing/results/{{ search.id }}/" class="btn btn-primary w-100">
+          <i class="fas fa-eye me-2"></i>View Results
+        </a>
       </div>
-    </li>
+    </div>
+  </div>
   {% empty %}
-    <li class="list-group-item">暂无历史记录</li>
+  <div class="col-12">
+    <div class="empty-state">
+      <i class="fas fa-history fa-4x text-muted mb-4"></i>
+      <h4>No search history yet</h4>
+      <p>Your previous car hire searches will appear here.</p>
+      <a href="/pricing/search/" class="btn btn-primary">Start Your First Search</a>
+    </div>
+  </div>
   {% endfor %}
-</ul>
+</div>
 {% endblock %}

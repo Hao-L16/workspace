@@ -9,13 +9,13 @@ from .models import QuoteSearch,QuoteOffer, FavoriteOffer
 
 ONE_WAY_FEE = 20
 ARNOLD_CLARK_RATES = [
-    {"code": "SMALL", "name": "Smallr", "daily_price": 41, "transmission": "Manual"},
-    {"code": "SMALL_AUTO", "name": "Small Automatic", "daily_price": 49, "transmission": "Automatic"},
+    {"code": "SMALL", "name": "Small", "daily_price": 41, "transmission": "Manual"},
+    {"code": "SMALL_AUTO", "name": "Smallc", "daily_price": 49, "transmission": "Automatic"},
     {"code": "MEDIUM", "name": "Medium", "daily_price": 58, "transmission": "Manual"},
-    {"code": "MEDIUM_AUTO", "name": "Medium Automatic", "daily_price": 46, "transmission": "Automatic"},
+    {"code": "MEDIUM_AUTO", "name": "Medium", "daily_price": 46, "transmission": "Automatic"},
     {"code": "SUV", "name": "SUV", "daily_price": 53, "transmission": "Manual"},
-    {"code": "SUV_AUTO", "name": "SUV Automatic", "daily_price": 67, "transmission": "Automatic"},
-    {"code": "ESTATE_AUTO", "name": "Large Estate Automatic", "daily_price": 58, "transmission": "Automatic"},
+    {"code": "SUV_AUTO", "name": "SUV", "daily_price": 67, "transmission": "Automatic"},
+    {"code": "ESTATE_AUTO", "name": "Estate", "daily_price": 58, "transmission": "Automatic"},
 ]
 ARNOLD_CLARK_BOOKING_URL = "https://www.arnoldclarkrental.com/"
 def _calc_days(pickup_dt: datetime, return_dt: datetime) -> int:
@@ -100,6 +100,38 @@ def pricing_results(request, search_id: int):
 
     # 3) 从 DB 读 offers（用于模板渲染）
     offers_qs = QuoteOffer.objects.filter(search=qs).order_by("total_price")
+
+    # 额外附加一些便于模板显示的数据（模型中没有这些字段）
+    for offer in offers_qs:
+        raw = offer.raw_json or {}
+        offer.daily_price = raw.get("daily_price")
+        offer.days = raw.get("days")
+        offer.one_way_fee = raw.get("one_way_fee")
+
+        # Determine image name based on size + transmission
+        name = (offer.car_name or "").lower()
+        trans = (offer.transmission or "").lower()
+
+        if "estate" in name or "large" in name:
+            size_key = "estate"
+        elif "suv" in name:
+            size_key = "suv"
+        elif "medium" in name:
+            size_key = "medium"
+        elif "small" in name:
+            size_key = "small"
+        else:
+            size_key = "default"
+
+        if "auto" in trans or "automatic" in trans:
+            drive_key = "auto"
+        else:
+            drive_key = "manual"
+
+        if size_key == "default":
+            offer.image_name = "default-car.png"
+        else:
+            offer.image_name = f"{size_key}-{drive_key}.png"
 
     # 4) 如果用户登录，取出已收藏的 offer_ids，便于按钮状态显示
     favorite_ids = set()

@@ -1,10 +1,46 @@
 {% extends "base.html" %}
-{% block title %}Register{% endblock %}
+{% block title %}Register - Glasgow Car Hire{% endblock %}
+
 {% block content %}
-  <h2>注册</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Register</button>
-  </form>
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-4">
+    <div class="card">
+      <div class="card-header text-center">
+        <h2 class="mb-0">Create Account</h2>
+        <p class="text-muted mt-2 mb-0">Join the Glasgow Car Hire community</p>
+      </div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="{{ form.username.id_for_label }}" class="form-label fw-semibold">Username</label>
+            {{ form.username }}
+          </div>
+          <div class="mb-3">
+            <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold">Email (Optional)</label>
+            {{ form.email }}
+          </div>
+          <div class="mb-3">
+            <label for="{{ form.password1.id_for_label }}" class="form-label fw-semibold">Password</label>
+            {{ form.password1 }}
+          </div>
+          <div class="mb-4">
+            <label for="{{ form.password2.id_for_label }}" class="form-label fw-semibold">Confirm Password</label>
+            {{ form.password2 }}
+          </div>
+          <button type="submit" class="btn btn-primary w-100 btn-lg">
+            <i class="fas fa-user-plus me-2"></i>Create Account
+          </button>
+        </form>
+        
+        <div class="text-center mt-4">
+          <p class="text-muted mb-2">Already have an account?</p>
+          <a href="/accounts/login/" class="btn btn-outline-primary">
+            Sign In
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

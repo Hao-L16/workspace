@@ -1,36 +1,52 @@
 {% extends "base.html" %}
-{% block content %}
-<h2 class="mb-3">我的收藏报价</h2>
+{% block title %}Favorite Offers - Glasgow Car Hire{% endblock %}
 
-<table class="table table-bordered table-striped">
-  <thead>
-    <tr>
-      <th>供应商</th>
-      <th>车型</th>
-      <th>变速箱</th>
-      <th>总价</th>
-      <th>来自搜索</th>
-      <th>操作</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for f in favorites %}
-      <tr>
-        <td>{{ f.offer.provider_name }}</td>
-        <td>{{ f.offer.car_name }}</td>
-        <td>{{ f.offer.transmission }}</td>
-        <td><b>£{{ f.offer.total_price }}</b></td>
-        <td>
-          <a href="/pricing/results/{{ f.offer.search_id }}/">Search #{{ f.offer.search_id }}</a>
-        </td>
-        <td>
-          <a class="btn btn-sm btn-outline-primary" href="{{ f.offer.deeplink_url }}" target="_blank">去官网</a>
-          <a class="btn btn-sm btn-outline-danger" href="/pricing/offer/{{ f.offer.id }}/favorite/">取消收藏</a>
-        </td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="6">暂无收藏</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
+{% block content %}
+<div class="text-center mb-5">
+  <h1 class="mb-3">Your Favorite Offers</h1>
+  <p class="text-muted">Quick access to your saved car hire options</p>
+</div>
+
+<div class="row g-4">
+  {% for favorite in favorites %}
+  <div class="col-md-6 col-lg-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div>
+            <h6 class="card-title mb-1">{{ favorite.offer.car_name }}</h6>
+            <span class="badge bg-secondary">{{ favorite.offer.transmission }}</span>
+          </div>
+          <div class="text-end">
+            <div class="display-6 fw-bold text-primary mb-1">£{{ favorite.offer.total_price }}</div>
+            <small class="text-muted">Total</small>
+          </div>
+        </div>
+        
+        <p class="text-muted small mb-4">
+          From Search #{{ favorite.offer.search_id }}
+        </p>
+        
+        <div class="d-flex gap-3">
+          <a href="{{ favorite.offer.deeplink_url }}" class="btn btn-primary flex-fill" target="_blank">
+            <i class="fas fa-external-link-alt me-2"></i>Book Now
+          </a>
+          <a href="/pricing/offer/{{ favorite.offer.id }}/favorite/" class="btn btn-outline-danger">
+            <i class="fas fa-heart-broken me-2"></i>Remove
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12">
+    <div class="empty-state">
+      <i class="fas fa-heart fa-4x text-muted mb-4"></i>
+      <h4>No favorite offers yet</h4>
+      <p>Save offers you like while comparing prices to access them quickly here.</p>
+      <a href="/pricing/search/" class="btn btn-primary">Start Comparing</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
 {% endblock %}

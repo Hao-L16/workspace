@@ -27,5 +27,6 @@ urlpatterns = [
     path("pricing/", include("pricing.urls")),
     path("community/", include("community.urls")),
 ]
-if settings.DEBUG:
+# 仅在本地开发且未配置 Cloudinary 时提供本地媒体文件服务
+if settings.DEBUG and not settings.CLOUDINARY_URL:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -2,30 +2,32 @@
 {% block title %}Community - Glasgow Car Hire{% endblock %}
 
 {% block content %}
-<div class="community-header">
-  <div>
-    <h1 class="community-title">Driving Community</h1>
-    <p class="community-subtitle">Share routes, avoid pitfalls, and learn from fellow drivers</p>
+<section class="community-hero mb-4">
+  <div class="community-hero__content">
+    <div>
+      <span class="community-hero__eyebrow">Student Driving Hub</span>
+      <h1 class="community-title mb-2">Driving Community</h1>
+      <p class="community-subtitle mb-0">Share routes, parking tips, and lessons learned with other student drivers.</p>
+    </div>
+    <a href="/community/new/" class="btn btn-primary btn-lg community-hero__cta">
+      <i class="fas fa-plus me-2"></i>New Post
+    </a>
   </div>
-  <a href="/community/new/" class="btn btn-primary btn-lg">
-    <i class="fas fa-plus me-2"></i>Share Experience
-  </a>
-</div>
+</section>
 
-<!-- Search and Filter -->
-<div class="search-filter-section card mb-5">
+<section class="search-panel card mb-4">
   <div class="card-body">
     <form class="search-form" method="get">
-      <div class="row g-3">
-        <div class="col-md-8">
-          <div class="input-group">
-            <span class="input-group-text bg-light border-0">
-              <i class="fas fa-search text-muted"></i>
-            </span>
-            <input class="form-control border-start-0 ps-0" name="q" placeholder="Search routes, tips, or experiences..." value="{{ q }}">
+      <div class="row g-3 align-items-end">
+        <div class="col-lg-7">
+          <label class="form-label">Search posts</label>
+          <div class="community-search-input input-group">
+            <span class="input-group-text"><i class="fas fa-search"></i></span>
+            <input class="form-control" name="q" placeholder="Search routes, tips, parking, insurance..." value="{{ q }}">
           </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-lg-3 col-md-6">
+          <label class="form-label">Category</label>
           <select class="form-select" name="category">
             <option value="">All Categories</option>
             {% for code, name in categories %}
@@ -33,119 +35,111 @@
             {% endfor %}
           </select>
         </div>
-        <div class="col-md-1">
-          <button class="btn btn-outline-secondary w-100" type="submit">
-            <i class="fas fa-search"></i>
+        <div class="col-lg-2 col-md-6 d-grid">
+          <button class="btn btn-primary" type="submit">
+            <i class="fas fa-filter me-2"></i>Apply
           </button>
         </div>
       </div>
     </form>
-    
-    <!-- Category Tabs -->
-    <ul class="category-tabs nav nav-pills mt-4 justify-content-center">
-      <li class="nav-item">
-        <a class="nav-link {% if not category %}active{% endif %}" href="/community/?q={{ q }}">
-          <i class="fas fa-th-list me-2"></i>All
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if category == 'ROUTE' %}active{% endif %}" href="/community/?category=ROUTE&q={{ q }}">
-          <i class="fas fa-route me-2"></i>Routes
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if category == 'AVOID' %}active{% endif %}" href="/community/?category=AVOID&q={{ q }}">
-          <i class="fas fa-exclamation-triangle me-2"></i>Pitfalls
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link {% if category == 'TIPS' %}active{% endif %}" href="/community/?category=TIPS&q={{ q }}">
-          <i class="fas fa-lightbulb me-2"></i>Tips
-        </a>
-      </li>
-    </ul>
+
+    <div class="community-filter-chips mt-4">
+      <a class="community-chip {% if not category %}active{% endif %}" href="/community/?q={{ q }}">
+        <i class="fas fa-border-all me-2"></i>All
+      </a>
+      <a class="community-chip {% if category == 'ROUTE' %}active{% endif %}" href="/community/?category=ROUTE&q={{ q }}">
+        <i class="fas fa-route me-2"></i>Routes
+      </a>
+      <a class="community-chip {% if category == 'AVOID' %}active{% endif %}" href="/community/?category=AVOID&q={{ q }}">
+        <i class="fas fa-circle-exclamation me-2"></i>Avoid
+      </a>
+      <a class="community-chip {% if category == 'TIPS' %}active{% endif %}" href="/community/?category=TIPS&q={{ q }}">
+        <i class="fas fa-lightbulb me-2"></i>Tips
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="community-toolbar mb-4">
+  <div class="community-toolbar__stats">
+    <span class="community-count">{{ page_obj.paginator.count }}</span>
+    <span class="text-muted">post{{ page_obj.paginator.count|pluralize }} found</span>
   </div>
 </div>
 
-<!-- Posts -->
-<div class="posts-grid row g-4">
+<div class="row g-4">
   {% for post in page_obj %}
-  <div class="col-lg-6">
-    <div class="post-card card h-100">
+  <div class="col-xl-6">
+    <article class="post-card card h-100">
       {% if post.image %}
-      <img src="{{ post.image.url }}" class="post-thumbnail" alt="Post image">
+      <a href="/community/post/{{ post.id }}/" class="post-card__media-link">
+        <img src="{{ post.image.url }}" class="post-thumbnail" alt="{{ post.title }}">
+      </a>
       {% endif %}
-      <div class="card-body">
-        <div class="post-meta d-flex justify-content-between align-items-start mb-3">
-          <h5 class="post-title mb-1">
-            <a href="/community/post/{{ post.id }}/" class="text-decoration-none text-dark">{{ post.title }}</a>
-          </h5>
-          <span class="badge 
-            {% if post.category == 'ROUTE' %}bg-primary
-            {% elif post.category == 'AVOID' %}bg-danger
-            {% elif post.category == 'TIPS' %}bg-success
-            {% else %}bg-secondary{% endif %}">
+
+      <div class="card-body d-flex flex-column">
+        <div class="post-card__top mb-3">
+          <span class="post-category-pill 
+            {% if post.category == 'ROUTE' %}post-category-pill--route
+            {% elif post.category == 'AVOID' %}post-category-pill--avoid
+            {% elif post.category == 'TIPS' %}post-category-pill--tips
+            {% else %}post-category-pill--default{% endif %}">
             {{ post.get_category_display }}
           </span>
+          <div class="post-meta-line mt-3">
+            <span><i class="fas fa-user me-1"></i>{{ post.author.username }}</span>
+            <span><i class="fas fa-calendar me-1"></i>{{ post.created_at|date:"M j, Y" }}</span>
+          </div>
         </div>
-        
-        <p class="post-excerpt card-text text-muted mb-3">
-          {{ post.content|truncatechars:150 }}
-        </p>
-        
-        <div class="post-footer d-flex justify-content-between align-items-center">
-          <small class="post-author text-muted">
-            <i class="fas fa-user me-1"></i>{{ post.author.username }} • 
-            <i class="fas fa-calendar me-1"></i>{{ post.created_at|date:"M j, Y" }}
-          </small>
+
+        <h3 class="post-title">
+          <a href="/community/post/{{ post.id }}/">{{ post.title }}</a>
+        </h3>
+
+        <p class="post-excerpt flex-grow-1">{{ post.content|truncatechars:170 }}</p>
+
+        <div class="post-footer">
           <a href="/community/post/{{ post.id }}/" class="btn btn-sm btn-outline-primary">
-            Read More
+            Read post <i class="fas fa-arrow-right ms-2"></i>
           </a>
         </div>
       </div>
-    </div>
+    </article>
   </div>
   {% empty %}
   <div class="col-12">
-    <div class="empty-state">
-      <i class="fas fa-comments fa-4x text-muted mb-4"></i>
-      <h4>No posts yet — be the first to share a route.</h4>
-      <p>Help fellow students by sharing your driving experiences and tips.</p>
-      <a href="/community/new/" class="btn btn-primary">Create First Post</a>
+    <div class="empty-state card">
+      <div class="card-body py-5">
+        <i class="fas fa-comments fa-4x text-muted mb-4"></i>
+        <h4>No matching posts yet</h4>
+        <p>Try another keyword, switch category, or create the first useful post for other students.</p>
+        <a href="/community/new/" class="btn btn-primary">Create First Post</a>
+      </div>
     </div>
   </div>
   {% endfor %}
 </div>
 
-<!-- Pagination -->
 {% if page_obj.has_other_pages %}
 <nav class="mt-5">
-  <ul class="pagination justify-content-center">
+  <ul class="pagination justify-content-center community-pagination">
     {% if page_obj.has_previous %}
       <li class="page-item">
         <a class="page-link" href="?page={{ page_obj.previous_page_number }}&category={{ category }}&q={{ q }}">
-          <i class="fas fa-chevron-left"></i>
+          <i class="fas fa-chevron-left me-2"></i>Previous
         </a>
       </li>
-    {% else %}
-      <li class="page-item disabled">
-        <span class="page-link"><i class="fas fa-chevron-left"></i></span>
-      </li>
     {% endif %}
-    
-    <li class="page-item disabled">
-      <span class="page-link">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+    <li class="page-item active">
+      <span class="page-link">Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
     </li>
-    
+
     {% if page_obj.has_next %}
       <li class="page-item">
         <a class="page-link" href="?page={{ page_obj.next_page_number }}&category={{ category }}&q={{ q }}">
-          <i class="fas fa-chevron-right"></i>
+          Next<i class="fas fa-chevron-right ms-2"></i>
         </a>
-      </li>
-    {% else %}
-      <li class="page-item disabled">
-        <span class="page-link"><i class="fas fa-chevron-right"></i></span>
       </li>
     {% endif %}
   </ul>

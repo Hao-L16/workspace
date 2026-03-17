@@ -3,55 +3,55 @@
 
 {% block content %}
 <div class="row justify-content-center">
-  <div class="col-lg-8">
-    <article class="card">
-      <div class="card-body">
-        <!-- Title -->
-        <h1 class="card-title mb-4">{{ post.title }}</h1>
-        
-        <!-- Meta Information -->
-        <div class="post-detail-header d-flex justify-content-between align-items-start mb-4 pb-4 border-bottom">
-          <div class="post-detail-meta d-flex align-items-center">
-            <span class="post-category-badge badge me-3
-              {% if post.category == 'ROUTE' %}bg-primary
-              {% elif post.category == 'AVOID' %}bg-danger
-              {% elif post.category == 'TIPS' %}bg-success
-              {% else %}bg-secondary{% endif %}">
-              {{ post.get_category_display }}
-            </span>
-            <div class="post-author-info text-muted">
-              <i class="fas fa-user me-1"></i>{{ post.author.username }} • 
-              <i class="fas fa-calendar me-1"></i>{{ post.created_at|date:"F j, Y \a\t g:i A" }}
-            </div>
+  <div class="col-xl-9 col-lg-10">
+    <article class="post-detail card">
+      {% if post.image %}
+      <div class="post-detail__hero">
+        <img src="{{ post.image.url }}" alt="{{ post.title }}" class="post-detail__hero-image">
+      </div>
+      {% endif %}
+
+      <div class="card-body post-detail__body">
+        <div class="post-detail__meta-wrap">
+          <span class="post-category-pill 
+            {% if post.category == 'ROUTE' %}post-category-pill--route
+            {% elif post.category == 'AVOID' %}post-category-pill--avoid
+            {% elif post.category == 'TIPS' %}post-category-pill--tips
+            {% else %}post-category-pill--default{% endif %}">
+            {{ post.get_category_display }}
+          </span>
+
+          <div class="post-meta-line">
+            <span><i class="fas fa-user me-1"></i>{{ post.author.username }}</span>
+            <span><i class="fas fa-calendar me-1"></i>{{ post.created_at|date:"F j, Y \a\t g:i A" }}</span>
           </div>
-          
-          {% if user.is_authenticated %}
-            {% if user == post.author or user.is_staff %}
-            <a href="/community/post/{{ post.id }}/delete/" class="btn btn-outline-danger">
-              <i class="fas fa-trash me-2"></i>Delete Post
-            </a>
-            {% endif %}
+        </div>
+
+        <div class="post-detail-header">
+          <div>
+            <h1 class="post-detail__title">{{ post.title }}</h1>
+            <p class="post-detail__subtitle">Shared by a community member to help other drivers make better decisions.</p>
+          </div>
+
+          {% if user.is_authenticated and user == post.author or user.is_authenticated and user.is_staff %}
+          <a href="/community/post/{{ post.id }}/delete/" class="btn btn-outline-danger">
+            <i class="fas fa-trash me-2"></i>Delete
+          </a>
           {% endif %}
         </div>
-        
-        <!-- Image -->
-        {% if post.image %}
-        <div class="post-image-container mb-4">
-          <img src="{{ post.image.url }}" alt="Post Image" class="post-img">
-        </div>
-        {% endif %}
-        
-        <!-- Content -->
-        <div class="post-detail-content">
-          <p>{{ post.content }}</p>
+
+        <div class="post-detail-content post-content">
+          {{ post.content|linebreaks }}
         </div>
       </div>
     </article>
-    
-    <!-- Back Button -->
-    <div class="post-actions text-center mt-5">
-      <a href="/community/" class="back-btn btn btn-outline-secondary btn-lg px-4">
+
+    <div class="post-actions mt-4 d-flex flex-wrap gap-3 justify-content-center">
+      <a href="/community/" class="btn btn-outline-secondary btn-lg">
         <i class="fas fa-arrow-left me-2"></i>Back to Community
+      </a>
+      <a href="/community/new/" class="btn btn-primary btn-lg">
+        <i class="fas fa-pen me-2"></i>Write a Post
       </a>
     </div>
   </div>

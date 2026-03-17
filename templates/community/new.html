@@ -2,48 +2,52 @@
 {% block title %}Create Post - Community{% endblock %}
 
 {% block content %}
-<div class="post-form-container row justify-content-center">
-  <div class="col-lg-8">
-    <div class="card">
-      <div class="post-form-header card-header text-center">
-        <h2 class="post-form-title mb-0">Share Your Experience</h2>
-        <p class="post-form-subtitle text-muted mt-2 mb-0">Help fellow students with your driving knowledge</p>
+<div class="row justify-content-center">
+  <div class="col-xl-8 col-lg-9">
+    <section class="post-editor card">
+      <div class="card-header post-form-header text-start">
+        <span class="community-hero__eyebrow">Community contribution</span>
+        <h2 class="post-form-title mb-2">Share Your Experience</h2>
+        <p class="post-form-subtitle mb-0">A clear title and a short practical description will help other students faster.</p>
       </div>
+
       <div class="card-body">
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" class="post-editor__form">
           {% csrf_token %}
-          <div class="form-group mb-4">
-            <label for="{{ form.title.id_for_label }}" class="form-label fw-semibold">Title</label>
+
+          <div class="form-group">
+            <label for="{{ form.title.id_for_label }}" class="form-label">Title</label>
             {{ form.title }}
           </div>
-          
-          <div class="form-group mb-4">
-            <label for="{{ form.category.id_for_label }}" class="form-label fw-semibold">Category</label>
+
+          <div class="form-group">
+            <label for="{{ form.category.id_for_label }}" class="form-label">Category</label>
             {{ form.category }}
           </div>
-          
-          <div class="form-group mb-4">
-            <label for="{{ form.content.id_for_label }}" class="form-label fw-semibold">Content</label>
+
+          <div class="form-group">
+            <label for="{{ form.content.id_for_label }}" class="form-label">Content</label>
             {{ form.content }}
+            <div class="form-text">Example: where you drove, what problem happened, and what others should do differently.</div>
           </div>
-          
-          <div class="form-group mb-4">
-            <label for="{{ form.image.id_for_label }}" class="form-label fw-semibold">Image (Optional)</label>
+
+          <div class="form-group">
+            <label for="{{ form.image.id_for_label }}" class="form-label">Image <span class="text-muted">(optional)</span></label>
             {{ form.image }}
-            <div class="form-text">Share a photo of your route or experience</div>
+            <div class="form-text">You can upload parking signs, route photos, or useful road information.</div>
           </div>
-          
-          <div class="form-actions d-flex gap-3">
-            <button class="btn btn-primary btn-lg flex-fill" type="submit">
-              <i class="fas fa-paper-plane me-2"></i>Share Post
-            </button>
+
+          <div class="post-editor__actions">
             <a class="btn btn-outline-secondary btn-lg" href="/community/">
-              <i class="fas fa-times me-2"></i>Cancel
+              <i class="fas fa-arrow-left me-2"></i>Back
             </a>
+            <button class="btn btn-primary btn-lg" type="submit">
+              <i class="fas fa-paper-plane me-2"></i>Publish Post
+            </button>
           </div>
         </form>
       </div>
-    </div>
+    </section>
   </div>
 </div>
 {% endblock %}

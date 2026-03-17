@@ -80,23 +80,23 @@ def pricing_results(request, search_id: int):
             }
         })
 
-    # 2) 写入数据库：清理旧 offers → 重新生成（简单稳，不怕重复）
-    QuoteOffer.objects.filter(search=qs).delete()
-    QuoteOffer.objects.bulk_create([
-        QuoteOffer(
-            search=qs,
-            agent_id=o["agent_id"],
-            provider_name=o["provider_name"],
-            car_name=o["car_name"],
-            transmission=o["transmission"],
-            seats=o["seats"],
-            total_price=o["total_price"],
-            currency=o["currency"],
-            deeplink_url=o["deeplink_url"],
-            raw_json=o["raw_json"],
-        )
-        for o in computed
-    ])
+    # 2) 写入数据库：如果没有offers，创建（避免每次刷新时id改变，导致收藏失效）
+    if not QuoteOffer.objects.filter(search=qs).exists():
+        QuoteOffer.objects.bulk_create([
+            QuoteOffer(
+                search=qs,
+                agent_id=o["agent_id"],
+                provider_name=o["provider_name"],
+                car_name=o["car_name"],
+                transmission=o["transmission"],
+                seats=o["seats"],
+                total_price=o["total_price"],
+                currency=o["currency"],
+                deeplink_url=o["deeplink_url"],
+                raw_json=o["raw_json"],
+            )
+            for o in computed
+        ])
 
     # 3) 从 DB 读 offers（用于模板渲染）
     offers_qs = QuoteOffer.objects.filter(search=qs).order_by("total_price")
@@ -183,4 +183,4 @@ def toggle_favorite_offer(request, offer_id: int):
         messages.info(request, "已取消收藏。")
 
     # 回到报价结果页（更符合用户习惯）
-    return redirect("pricing_results", search_id=offer.search_id)
+    return redirect("pricing_results", search_id=offer.search.id)
